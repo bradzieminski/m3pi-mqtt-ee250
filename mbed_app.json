@@ -16,10 +16,10 @@
             "value": true
         },
         "wifi-ssid": {
-            "value": "\"ee250-2.4ghz\""
+            "value": "\"USC Guest Wireless\""
         },
         "wifi-password": {
-            "value": "\"ee250@vhe205\""
+            "value": "\"\""
         }
     },
     "target_overrides": {
