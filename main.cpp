@@ -190,12 +190,10 @@ int main()
        MQTT messages! */
     movement('w', 50, 500);
     movement('w', 50, 500);
-    movement('a', 50, 500);
-    movement('a', 50, 500);
+    movement('a', 50, 200);
     movement('w', 50, 500);
     movement('w', 50, 500);
-    movement('a', 50, 500);
-    movement('a', 50, 500);
+    movement('a', 50, 200);
 
     /*movement('w', 25, 100);
     movement('w', 25, 100);
