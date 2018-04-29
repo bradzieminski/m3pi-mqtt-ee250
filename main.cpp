@@ -194,6 +194,14 @@ int main()
     movement('a', 25, 100);
     movement('a', 25, 100);
     movement('a', 25, 100);
+    movement('w', 25, 100);
+    movement('w', 25, 100);
+    movement('w', 25, 100);
+    movement('w', 25, 100);
+    movement('a', 25, 100);
+    movement('a', 25, 100);
+    movement('a', 25, 100);
+    movement('a', 25, 100);/*
     movement('d', 25, 100);
     movement('d', 25, 100);
     movement('d', 25, 100);
@@ -201,7 +209,7 @@ int main()
     movement('s', 25, 100);
     movement('s', 25, 100);
     movement('s', 25, 100);
-    movement('s', 25, 100);
+    movement('s', 25, 100);*/
 
     wait(1); //delay startup 
     printf("Resetting ESP8266 Hardware...\n");
