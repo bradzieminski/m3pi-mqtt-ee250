@@ -68,6 +68,8 @@ extern "C" void mbed_reset();
 /* turn on easy-connect debug prints */
 #define EASY_CONNECT_LOGGING    true
 
+
+
 DigitalOut wifiHwResetPin(WIFI_HW_RESET_PIN);
 
 /** Initialize the m3pi for robot movements. There is an atmega328p MCU in the
@@ -186,7 +188,16 @@ int main()
        at a speed of 25 (speed can be between -127 to 127) for 100 ms. Use
        functions like this in your program to move your m3pi when you get 
        MQTT messages! */
-    movement('w', 25, 100);
+    movement('w', 50, 500);
+    movement('w', 50, 500);
+    movement('a', 50, 500);
+    movement('a', 50, 500);
+    movement('w', 50, 500);
+    movement('w', 50, 500);
+    movement('a', 50, 500);
+    movement('a', 50, 500);
+
+    /*movement('w', 25, 100);
     movement('w', 25, 100);
     movement('w', 25, 100);
     movement('w', 25, 100);
@@ -201,7 +212,7 @@ int main()
     movement('a', 25, 100);
     movement('a', 25, 100);
     movement('a', 25, 100);
-    movement('a', 25, 100);/*
+    movement('a', 25, 100);
     movement('d', 25, 100);
     movement('d', 25, 100);
     movement('d', 25, 100);
