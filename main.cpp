@@ -188,11 +188,9 @@ int main()
        at a speed of 25 (speed can be between -127 to 127) for 100 ms. Use
        functions like this in your program to move your m3pi when you get 
        MQTT messages! */
-    movement('w', 50, 500);
-    movement('w', 50, 500);
+    movement('w', 50, 1000);
     movement('a', 50, 200);
-    movement('w', 50, 500);
-    movement('w', 50, 500);
+    movement('w', 50, 1000);
     movement('a', 50, 200);
 
     /*movement('w', 25, 100);
