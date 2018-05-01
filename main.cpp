@@ -104,7 +104,7 @@ static char *topic = "m3pi-mqtt-ee250";
  */
 void movement(char command, char speed, int delta_t)
 {
-    if (command == 's')
+    if (command == 'w')
     {
         m3pi.forward(speed);
         Thread::wait(delta_t);
@@ -116,7 +116,7 @@ void movement(char command, char speed, int delta_t)
         Thread::wait(delta_t);
         m3pi.stop();
     }   
-    else if (command == 'w')
+    else if (command == 's')
     {
         m3pi.backward(speed);
         Thread::wait(delta_t);
@@ -128,6 +128,14 @@ void movement(char command, char speed, int delta_t)
         Thread::wait(delta_t);
         m3pi.stop();
     }
+}
+
+#define rSpeed 25
+void rotate(unsigned char degrees)
+{
+    m3pi.right(rSpeed);
+    Thread::wait(5000);
+    m3pi.stop();
 }
 
 /* Callback for any received MQTT messages */
@@ -188,10 +196,28 @@ int main()
        at a speed of 25 (speed can be between -127 to 127) for 100 ms. Use
        functions like this in your program to move your m3pi when you get 
        MQTT messages! */
-    movement('w', 50, 1000);
-    movement('a', 50, 200);
-    movement('w', 50, 1000);
-    movement('a', 50, 200);
+
+    rotate(90);
+
+    /*for(int time = 0; time < 1; time++)
+    { 
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+        movement('w', 25, 1000);
+        movement('a', 25, 150);
+    }*/
 
     /*movement('w', 25, 100);
     movement('w', 25, 100);
