@@ -88,7 +88,7 @@ void LEDThread(void *args)
 
             /* the second byte in the message denotes the action type */
             switch (msg->content[1]) {
-                case TOGGLE_START_STOP:
+                case START:
                     printf("TOGGLE; r = %i \n", radius);
                     moving = true;
                     calibrateRadius();

@@ -7,12 +7,12 @@ import re
 ser = serial.Serial("/dev/ttyACM0", 19200)
 radius = 20
 moving = False
-sensors []
+sensors = []
 
 def allBack(client, userdata, message):
 	global radius;
 	dec = str(message.payload, "utf-8")
-	elif dec == "\x01\01":
+	if dec == "\x01\01":
 		radius = min(radius + 5, 50)
 		print("r =", radius)
 	elif dec == "\x01\02":
@@ -44,14 +44,14 @@ def start():
 def checkRobot(n):
 	global sensors
 	stop()
+	prev = sensors[n]
 	sensors = readSensors()
 
-	if sensors[n] > 80:
-		start()
-		return False
-	else:
-		return True
+	if sensors[n] < 80 and abs(sensors[n] - prev) < 5:
 		exit()
+		return True
+	else:
+		return False
 
 def alg():
 	global sensors
