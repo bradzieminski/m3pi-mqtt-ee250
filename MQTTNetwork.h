@@ -20,9 +20,10 @@ enum {
  * LED thread task types
  */
 enum {
-    LED_THR_PUBLISH_MSG,
-    LED_ON_ONE_SEC,
-    LED_BLINK_FAST
+    TOGGLE_START_STOP,
+    INCREASE_RADIUS,
+    DECREASE_RADIUS,
+    DETECTED
 };
 
 /**

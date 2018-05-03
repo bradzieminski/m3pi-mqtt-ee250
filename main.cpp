@@ -84,7 +84,7 @@ m3pi m3pi(p23, p9, p10);
  */
 Mutex mqttMtx;
 
-static char *topic = "m3pi-mqtt-ee250";
+static char *topic = "ee250zc";
 
 /**
  * @brief      controls movement of the 3pi
@@ -131,11 +131,18 @@ void movement(char command, char speed, int delta_t)
 }
 
 #define rSpeed 25
-void rotate(unsigned char degrees)
+void rotate90()
 {
     m3pi.right(rSpeed);
     Thread::wait(5000);
     m3pi.stop();
+}
+/*#define w 0.314 // 2*pi/20 Units rad/s
+#define rDiff 4.125 //Units cm
+*/
+void orbitClockwise(char r, int delta_t)
+{
+
 }
 
 /* Callback for any received MQTT messages */
@@ -191,59 +198,6 @@ void messageArrived(MQTT::MessageData& md)
 
 int main()
 {
-    /* Uncomment this to see how the m3pi moves. This sequence of functions
-       represent w-a-s-d like controlling. Each button press moves the robot
-       at a speed of 25 (speed can be between -127 to 127) for 100 ms. Use
-       functions like this in your program to move your m3pi when you get 
-       MQTT messages! */
-
-    rotate(90);
-
-    /*for(int time = 0; time < 1; time++)
-    { 
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-        movement('w', 25, 1000);
-        movement('a', 25, 150);
-    }*/
-
-    /*movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('w', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('a', 25, 100);
-    movement('d', 25, 100);
-    movement('d', 25, 100);
-    movement('d', 25, 100);
-    movement('d', 25, 100);
-    movement('s', 25, 100);
-    movement('s', 25, 100);
-    movement('s', 25, 100);
-    movement('s', 25, 100);*/
-
     wait(1); //delay startup 
     printf("Resetting ESP8266 Hardware...\n");
     wifiHwResetPin = 0;
@@ -314,6 +268,12 @@ int main()
      have MQTTAsync, but some effort is needed to adapt mbed OS libraries to
      be used by the MQTTAsync library. Please do NOT do anything else in this
      thread. Let it serve as your background MQTT thread. */
+    
+    for(int a = 0; a < 2; a++)
+    {
+        //orbitClockwise(50, 20000);
+    }
+
     while(1) {
         Thread::wait(1000);
         printf("main: yielding...\n", client.isConnected());

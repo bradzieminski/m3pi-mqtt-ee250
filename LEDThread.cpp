@@ -43,6 +43,9 @@
  * @author     Bhaskar Krishnachari <bkrishna@usc.edu>
  */
 
+#include <cmath>
+
+#include "m3pi.h"
 #include "LEDThread.h"
 #include "MQTTmbed.h"
 #include "MQTTNetwork.h"
@@ -53,7 +56,19 @@ Mail<MailMsg, LEDTHREAD_MAILBOX_SIZE> LEDMailbox;
 
 static DigitalOut led2(LED2);
 
-static const char *topic = "m3pi-mqtt-ee250/led-thread";
+static const char *topic = "ee250zc/led-thread";
+extern m3pi m3pi;
+
+int radius = 20;
+bool moving = false;
+
+void calibrateRadius()
+{
+    float rightS = (radius + 4.125);
+    float leftS = (radius - 4.125);
+    m3pi.right_motor((char) round(rightS));
+    m3pi.left_motor((char) round(leftS));
+}
 
 void LEDThread(void *args) 
 {
@@ -73,37 +88,27 @@ void LEDThread(void *args)
 
             /* the second byte in the message denotes the action type */
             switch (msg->content[1]) {
-                case LED_THR_PUBLISH_MSG:
-                    printf("LEDThread: received command to publish to topic"
-                           "m3pi-mqtt-example/led-thread\n");
-                    pub_buf[0] = 'h';
-                    pub_buf[1] = 'i';
-                    message.qos = MQTT::QOS0;
-                    message.retained = false;
-                    message.dup = false;
-                    message.payload = (void*)pub_buf;
-                    message.payloadlen = 2; //MQTTclient.h takes care of adding null char?
-                    /* Lock the global MQTT mutex before publishing */
-                    mqttMtx.lock();
-                    client->publish(topic, message);
-                    mqttMtx.unlock();
+                case TOGGLE_START_STOP:
+                    printf("TOGGLE; r = %i \n", radius);
+                    moving = !moving;
+                    if (moving)
+                        calibrateRadius();
+                    else
+                        m3pi.stop();
                     break;
-                case LED_ON_ONE_SEC:
-                    printf("LEDThread: received message to turn LED2 on for"
-                           "one second...\n");
-                    led2 = 1;
-                    wait(1);
-                    led2 = 0;
+                case INCREASE_RADIUS:
+                    printf("INC RAD\n");
+                    radius = fmin(radius + 5, 50);
+                    printf("r = %i \n", radius);
                     break;
-                case LED_BLINK_FAST:
-                    printf("LEDThread: received message to blink LED2 fast for"
-                           "one second...\n");
-                    for(int i = 0; i < 10; i++)
-                    {
-                        led2 = !led2;
-                        wait(0.1);
-                    }
-                    led2 = 0;
+                case DECREASE_RADIUS:
+                    printf("DEC RAD\n");
+                    radius = fmax(radius - 5, 20);
+                    printf("r = %i \n", radius);
+                    break;
+                case DETECTED:
+                    m3pi.stop();
+                    moving = false;
                     break;
                 default:
                     printf("LEDThread: invalid message\n");
