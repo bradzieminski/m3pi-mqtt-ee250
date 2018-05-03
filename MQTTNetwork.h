@@ -20,10 +20,10 @@ enum {
  * LED thread task types
  */
 enum {
-    TOGGLE_START_STOP,
+    START,
     INCREASE_RADIUS,
     DECREASE_RADIUS,
-    DETECTED
+    STOP
 };
 
 /**

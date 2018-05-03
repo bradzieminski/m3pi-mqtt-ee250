@@ -90,12 +90,8 @@ void LEDThread(void *args)
             switch (msg->content[1]) {
                 case TOGGLE_START_STOP:
                     printf("TOGGLE; r = %i \n", radius);
-                    moving = !moving;
-                    if (moving)
-                        calibrateRadius();
-                    else
-                        m3pi.stop();
-                    break;
+                    moving = true;
+                    calibrateRadius();
                 case INCREASE_RADIUS:
                     printf("INC RAD\n");
                     radius = fmin(radius + 5, 50);
@@ -106,7 +102,7 @@ void LEDThread(void *args)
                     radius = fmax(radius - 5, 20);
                     printf("r = %i \n", radius);
                     break;
-                case DETECTED:
+                case STOP:
                     m3pi.stop();
                     moving = false;
                     break;
