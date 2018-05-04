@@ -28,8 +28,10 @@ def toggleBack(client, userdata, message):
 		kludge[0] = False
 		return
 
-	patroling = ~patroling
 	if patroling:
+		patroling = false
+	else:
+		patroling = True
 		client.publish("ee250zc/rpi_radius", str(radius))
 		patrol()
 
@@ -67,13 +69,14 @@ def on_message(client, userdata, msg):
 
 def readSensors():
 	global sensors
+	global last_received
+
 	while True:
 		line = last_received
 		sensors = [int(re.sub('[^0-9]', '', s)) for s in line.split()]
-		if (len(sensors) != 4):
-			continue
-		print(sensors)
-		return sensors
+		if (len(sensors) == 4):
+			print(sensors)
+			break
 
 def stop():
 	client.publish("ee250zc", "\x01\x03")
@@ -117,7 +120,7 @@ def checkRobot(n):
 
 	for n in range(3):
 		time.sleep(1)
-		sensors = readSensors()
+		readSensors()
 		if sensors[n] != prev:
 			start()
 			return False
@@ -137,7 +140,7 @@ def patrol():
 
 	start()
 	while patroling:
-		sensors = readSensors()
+		readSensors()
 		alg()
 	stop()
 
