@@ -11,7 +11,7 @@ client = mqtt.Client()
 last_received = ""
 status = ""
 sensors = []
-radius = 20
+radius = 30
 patroling = False
 kludge = [True, True, True]
 
