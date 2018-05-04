@@ -59,17 +59,25 @@ static DigitalOut led2(LED2);
 static const char *topic = "ee250zc/led-thread";
 extern m3pi m3pi;
 
-int radius = 20;
+int radius = 30;
 int speed = 15;
 bool moving = false;
 
 void orbit()
 {
-    float rightS = speed*radius/(radius + 4.125);
-    float leftS = speed*radius/(radius - 4.125);
+    float rightS = 0.5*(radius - 4.125);
+    float leftS = 0.5*(radius + 4.125);
     m3pi.right_motor((char) round(rightS));
     m3pi.left_motor((char) round(leftS));
 }
+
+/*void orbit()
+{
+    float rightS = speed*(radius - 4.125)/radius;
+    float leftS = speed*(radius + 4.125)/radius;
+    m3pi.right_motor((char) round(rightS));
+    m3pi.left_motor((char) round(leftS));
+}*/
 
 void forward()
 {
