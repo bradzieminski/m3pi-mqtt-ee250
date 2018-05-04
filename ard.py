@@ -24,31 +24,27 @@ def toggleBack(client, userdata, message):
 	global patroling
 	patroling = ~patroling
 	if patroling:
+		client.publish("ee250zc/rpi_radius", str(radius))
 		patrol()
 
-def rpiBack(client, userdata, message):
-	global radius
-	global patroling
+def radiusIncBack(client, userdata, message):
+	radius = min(radius + 5, 20)
+	client.publish("ee250zc/rpi_radius", str(radius))
+	client.publish("ee250zc", "\x01\x01")
 
-	dec = str(message.payload, "utf-8")
-	print(dec)
-
-	if dec == "radius++":
-		radius = min(radius + 5, 20)
-		client.publish("ee250zc", "\x01\x01")
-	elif dec == "radius--":
-		radius = max(radius - 5, 20)
-		client.publish("ee250zc", "\x01\x02")
-	elif dec == "toggle":
-		patroling = ~patroling
-		if patroling:
-			patrol()
-	client.publish("ee250zc/radius", str(radius))
+def radiusDecBack(client, userdata, message):
+	radius = max(radius - 5, 20)
+	client.publish("ee250zc/rpi_radius", str(radius))
+	client.publish("ee250zc", "\x01\x02")
 
 def on_connect(client, userdata, flags, rc):
 	print("Connected to server (i.e., broker) with result code "+str(rc))
-	client.subscribe("ee250zc/rpi")
-	client.message_callback_add("ee250zc/rpi", rpiBack)
+	client.subscribe("ee250zc/rpi_toggle")
+	client.subscribe("ee250zc/rpi_radius_inc")
+	client.subscribe("ee250zc/rpi_radius_dec")
+	client.message_callback_add("ee250zc/rpi_toggle", toggleBack)
+	client.message_callback_add("ee250zc/rpi_radius_inc", radiusIncBack)
+	client.message_callback_add("ee250zc/rpi_radius_dec", radiusDecBack)
 
 def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
