@@ -38,7 +38,7 @@ def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
 
 def readSensors():
-	#ser = serial.Serial("/dev/ttyACM0", 19200)
+	global sensors
 	while True:
 		line = last_received
 		sensors = [int(re.sub('[^0-9]', '', s)) for s in line.split()]
@@ -52,6 +52,35 @@ def stop():
 
 def start():
 	client.publish("ee250zc", "\x01\x00")
+
+def moveForward():
+	client.publish("ee250zc", "\x01\x04")
+
+def rotate90CW:
+	client.publish("ee250zc", "\x01\x05")
+	time.sleep(2)
+
+def rotate90CCW:
+	client.publish("ee250zc", "\x01\x06")
+	time.sleep(2)
+
+def reRadius(n):
+	if sensors[n] > radius:
+		rotate90CCW()
+		moveForward()
+		while sensors[n] > radius:
+			readSensors()
+		stop()
+		rotate90CW()
+	else:
+		rotate90CW()
+		moveForward()
+		while sensors[n] < radius:
+			readSensors()
+		stop()
+		rotate90CCW()
+	start()
+
 
 def checkRobot(n):
 	global sensors
@@ -70,7 +99,9 @@ def alg():
 	global sensors
 	for n in range(4):
 		if sensors[n] < 70:
-			checkRobot(n)
+			if checkRobot(n):
+				if abs(sensors[n] - radius) > 2
+					reRadius(n)
 
 if __name__ == '__main__':
 	Thread(target=receiving).start()

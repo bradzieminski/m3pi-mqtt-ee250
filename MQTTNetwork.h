@@ -23,7 +23,10 @@ enum {
     START,
     INCREASE_RADIUS,
     DECREASE_RADIUS,
-    STOP
+    STOP,
+    FORWARD_SLOW,
+    ROTATE_90_CW,
+    ROTATE_90_CCW
 };
 
 /**

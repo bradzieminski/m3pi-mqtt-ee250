@@ -134,7 +134,7 @@ void movement(char command, char speed, int delta_t)
 void rotate90()
 {
     m3pi.right(rSpeed);
-    Thread::wait(5000);
+    Thread::wait(1000);
     m3pi.stop();
 }
 /*#define w 0.314 // 2*pi/20 Units rad/s
@@ -268,11 +268,6 @@ int main()
      have MQTTAsync, but some effort is needed to adapt mbed OS libraries to
      be used by the MQTTAsync library. Please do NOT do anything else in this
      thread. Let it serve as your background MQTT thread. */
-    
-    for(int a = 0; a < 2; a++)
-    {
-        //orbitClockwise(50, 20000);
-    }
 
     while(1) {
         Thread::wait(1000);

@@ -62,12 +62,26 @@ extern m3pi m3pi;
 int radius = 20;
 bool moving = false;
 
-void calibrateRadius()
+void move()
 {
-    float rightS = (radius + 4.125);
-    float leftS = (radius - 4.125);
+    float rightS = (radius - 4.125);
+    float leftS = (radius + 4.125);
     m3pi.right_motor((char) round(rightS));
     m3pi.left_motor((char) round(leftS));
+}
+
+void rotate90CW()
+{
+    m3pi.right(25);
+    Thread::wait(1000);
+    m3pi.stop();
+}
+
+void rotate90CCW()
+{
+    m3pi.left(25);
+    Thread::wait(1000);
+    m3pi.stop();
 }
 
 void LEDThread(void *args) 
@@ -89,9 +103,9 @@ void LEDThread(void *args)
             /* the second byte in the message denotes the action type */
             switch (msg->content[1]) {
                 case START:
-                    printf("TOGGLE; r = %i \n", radius);
+                    printf("START; r = %i \n", radius);
                     moving = true;
-                    calibrateRadius();
+                    move();
                 case INCREASE_RADIUS:
                     printf("INC RAD\n");
                     radius = fmin(radius + 5, 50);
@@ -105,6 +119,15 @@ void LEDThread(void *args)
                 case STOP:
                     m3pi.stop();
                     moving = false;
+                    break;
+                case FORWARD_SLOW:
+
+                    break;
+                case ROTATE_90_CW:
+                    rotate90CW();
+                    break;
+                case ROTATE_90_CCW:
+                    rotate90CCW();
                     break;
                 default:
                     printf("LEDThread: invalid message\n");
