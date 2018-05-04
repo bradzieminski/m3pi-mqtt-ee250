@@ -3,11 +3,21 @@ import paho.mqtt.client as mqtt
 import time
 import serial
 import re
+from threading import Thread
 
 ser = serial.Serial("/dev/ttyACM0", 19200)
 radius = 20
 moving = False
 sensors = []
+
+last_received = ''
+
+def receiving():
+	global ser
+	global last_received
+
+	while True:
+		last_received = ser.readline().decode("utf-8", "replace")
 
 def allBack(client, userdata, message):
 	global radius;
@@ -28,11 +38,13 @@ def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
 
 def readSensors():
+	#ser = serial.Serial("/dev/ttyACM0", 19200)
 	while True:
-		line = ser.readline().decode("utf-8", "replace")
+		line = last_received
 		sensors = [int(re.sub('[^0-9]', '', s)) for s in line.split()]
 		if (len(sensors) != 4):
 			continue
+		print(sensors)
 		return sensors
 
 def stop():
@@ -45,21 +57,24 @@ def checkRobot(n):
 	global sensors
 	stop()
 	prev = sensors[n]
-	sensors = readSensors()
 
-	if sensors[n] < 80 and abs(sensors[n] - prev) < 5:
-		exit()
-		return True
-	else:
-		return False
+	for n in range(3):
+		time.sleep(1)
+		sensors = readSensors()
+		if sensors[n] != prev:
+			start()
+			return False
+	return True
 
 def alg():
 	global sensors
 	for n in range(4):
-		if sensors[n] < 80:
+		if sensors[n] < 70:
 			checkRobot(n)
 
 if __name__ == '__main__':
+	Thread(target=receiving).start()
+
 	client = mqtt.Client()
 	client.on_message = on_message
 	client.on_connect = on_connect
@@ -70,5 +85,4 @@ if __name__ == '__main__':
 	while True:
 		sensors = readSensors()
 		alg()
-		#print(sensors)
 
