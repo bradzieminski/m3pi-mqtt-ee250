@@ -58,6 +58,7 @@ def radiusDecBack(client, userdata, message):
 
 	if kludge[2] == True:
 		kludge[2] = False
+		return
 
 	print("dec radius")
 	radius = max(radius - 5, 20)
@@ -85,7 +86,7 @@ def readSensors():
 		line = last_received
 		sensors = [int(re.sub('[^0-9]', '', s)) for s in line.split()]
 		if (len(sensors) == 4):
-			print(status, sensors)
+			print(sensors, status)
 			break
 
 def stop():
@@ -108,7 +109,7 @@ def rotate90CCW():
 def reRadius(n):
 	global sensors
 	global status
-	status = "reRadius"
+	status = "reRadius s="+str(n)
 
 	if sensors[n] > radius:
 		rotate90CCW()
@@ -130,12 +131,12 @@ def reRadius(n):
 def checkRobot(n):
 	global sensors
 	global status
-	status = "checkRobot s="+n
+	status = "checkRobot s="+str(n)
 
 	stop()
 	prev = sensors[n]
 
-	for n in range(3):
+	for n in range(1):
 		#time.sleep(1)
 		readSensors()
 		if sensors[n] != prev:
@@ -154,7 +155,7 @@ def alg():
 			if checkRobot(n):
 				if abs(sensors[n] - radius) > 2:
 					reRadius(n)
-				time.sleep(.5)
+				time.sleep(2)
 def patrol():
 	global sensors
 	global patroling
