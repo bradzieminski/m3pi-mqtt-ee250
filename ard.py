@@ -8,7 +8,8 @@ from threading import Thread
 ser = serial.Serial("/dev/ttyACM0", 19200)
 client = mqtt.Client()
 
-last_received = ''
+last_received = ""
+status = ""
 sensors = []
 radius = 20
 patroling = False
@@ -76,6 +77,7 @@ def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
 
 def readSensors():
+	global status
 	global sensors
 	global last_received
 
@@ -83,7 +85,7 @@ def readSensors():
 		line = last_received
 		sensors = [int(re.sub('[^0-9]', '', s)) for s in line.split()]
 		if (len(sensors) == 4):
-			print(sensors)
+			print(status, sensors)
 			break
 
 def stop():
@@ -104,6 +106,10 @@ def rotate90CCW():
 	time.sleep(2)
 
 def reRadius(n):
+	global sensors
+	global status
+	status = "reRadius"
+
 	if sensors[n] > radius:
 		rotate90CCW()
 		moveForward()
@@ -123,19 +129,26 @@ def reRadius(n):
 
 def checkRobot(n):
 	global sensors
+	global status
+	status = "checkRobot s="+n
+
 	stop()
 	prev = sensors[n]
 
 	for n in range(3):
-		time.sleep(1)
+		#time.sleep(1)
 		readSensors()
 		if sensors[n] != prev:
 			start()
+			status = ""
 			return False
+	status = ""
 	return True
 
 def alg():
 	global sensors
+	global status
+
 	for n in range(4):
 		if sensors[n] < 70:
 			if checkRobot(n):
