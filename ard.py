@@ -20,26 +20,33 @@ def receiving():
 	while True:
 		last_received = ser.readline().decode("utf-8", "replace")
 
+def toggleBack(client, userdata, message):
+	global patroling
+	patroling = ~patroling
+	if patroling:
+		patrol()
+
 def rpiBack(client, userdata, message):
 	global radius
 	global patroling
 
 	dec = str(message.payload, "utf-8")
+	print(dec)
+
 	if dec == "radius++":
 		radius = min(radius + 5, 20)
 		client.publish("ee250zc", "\x01\x01")
 	elif dec == "radius--":
 		radius = max(radius - 5, 20)
 		client.publish("ee250zc", "\x01\x02")
-	elif dec == "toggle"
-		patroling = !patroling
+	elif dec == "toggle":
+		patroling = ~patroling
 		if patroling:
 			patrol()
 	client.publish("ee250zc/radius", str(radius))
 
 def on_connect(client, userdata, flags, rc):
 	print("Connected to server (i.e., broker) with result code "+str(rc))
-	client.subscribe("ee250zc")
 	client.subscribe("ee250zc/rpi")
 	client.message_callback_add("ee250zc/rpi", rpiBack)
 
@@ -65,11 +72,11 @@ def start():
 def moveForward():
 	client.publish("ee250zc", "\x01\x04")
 
-def rotate90CW:
+def rotate90CW():
 	client.publish("ee250zc", "\x01\x05")
 	time.sleep(2)
 
-def rotate90CCW:
+def rotate90CCW():
 	client.publish("ee250zc", "\x01\x06")
 	time.sleep(2)
 
@@ -109,9 +116,9 @@ def alg():
 	for n in range(4):
 		if sensors[n] < 70:
 			if checkRobot(n):
-				if abs(sensors[n] - radius) > 2
+				if abs(sensors[n] - radius) > 2:
 					reRadius(n)
-					time.sleep(1)
+				time.sleep(.5)
 def patrol():
 	global sensors
 	global patroling
