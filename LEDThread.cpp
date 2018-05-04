@@ -60,14 +60,21 @@ static const char *topic = "ee250zc/led-thread";
 extern m3pi m3pi;
 
 int radius = 20;
+int speed = 15;
 bool moving = false;
 
-void move()
+void orbit()
 {
-    float rightS = (radius - 4.125);
-    float leftS = (radius + 4.125);
+    float rightS = speed*radius/(radius + 4.125);
+    float leftS = speed*radius/(radius - 4.125);
     m3pi.right_motor((char) round(rightS));
     m3pi.left_motor((char) round(leftS));
+}
+
+void forward()
+{
+    m3pi.right_motor(10);
+    m3pi.left_motor(10);
 }
 
 void rotate90CW()
@@ -105,7 +112,8 @@ void LEDThread(void *args)
                 case START:
                     printf("START; r = %i \n", radius);
                     moving = true;
-                    move();
+                    orbit();
+                    break;
                 case INCREASE_RADIUS:
                     printf("INC RAD\n");
                     radius = fmin(radius + 5, 50);
@@ -121,7 +129,7 @@ void LEDThread(void *args)
                     moving = false;
                     break;
                 case FORWARD_SLOW:
-
+                    forward();
                     break;
                 case ROTATE_90_CW:
                     rotate90CW();

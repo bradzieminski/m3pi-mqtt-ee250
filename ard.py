@@ -143,6 +143,7 @@ def checkRobot(n):
 			start()
 			status = ""
 			return False
+	start()
 	status = ""
 	return True
 
