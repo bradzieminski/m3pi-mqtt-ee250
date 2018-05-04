@@ -72,15 +72,15 @@ void move()
 
 void rotate90CW()
 {
-    m3pi.right(25);
-    Thread::wait(1000);
+    m3pi.right(10);
+    Thread::wait(1312);
     m3pi.stop();
 }
 
 void rotate90CCW()
 {
-    m3pi.left(25);
-    Thread::wait(1000);
+    m3pi.left(10);
+    Thread::wait(1312);
     m3pi.stop();
 }
 

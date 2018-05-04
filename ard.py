@@ -6,11 +6,12 @@ import re
 from threading import Thread
 
 ser = serial.Serial("/dev/ttyACM0", 19200)
-radius = 20
-moving = False
-sensors = []
+client = mqtt.Client()
 
 last_received = ''
+sensors = []
+radius = 20
+patroling = False
 
 def receiving():
 	global ser
@@ -19,20 +20,28 @@ def receiving():
 	while True:
 		last_received = ser.readline().decode("utf-8", "replace")
 
-def allBack(client, userdata, message):
-	global radius;
+def rpiBack(client, userdata, message):
+	global radius
+	global patroling
+
 	dec = str(message.payload, "utf-8")
-	if dec == "\x01\01":
-		radius = min(radius + 5, 50)
-		print("r =", radius)
-	elif dec == "\x01\02":
+	if dec == "radius++":
+		radius = min(radius + 5, 20)
+		client.publish("ee250zc", "\x01\x01")
+	elif dec == "radius--":
 		radius = max(radius - 5, 20)
-		print("r=", radius)
+		client.publish("ee250zc", "\x01\x02")
+	elif dec == "toggle"
+		patroling = !patroling
+		if patroling:
+			patrol()
+	client.publish("ee250zc/radius", str(radius))
 
 def on_connect(client, userdata, flags, rc):
 	print("Connected to server (i.e., broker) with result code "+str(rc))
 	client.subscribe("ee250zc")
-	client.message_callback_add("ee250zc", allBack)
+	client.subscribe("ee250zc/rpi")
+	client.message_callback_add("ee250zc/rpi", rpiBack)
 
 def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
@@ -102,18 +111,23 @@ def alg():
 			if checkRobot(n):
 				if abs(sensors[n] - radius) > 2
 					reRadius(n)
+					time.sleep(1)
+def patrol():
+	global sensors
+	global patroling
+
+	start()
+	while patroling:
+		sensors = readSensors()
+		alg()
+	stop()
 
 if __name__ == '__main__':
 	Thread(target=receiving).start()
-
-	client = mqtt.Client()
 	client.on_message = on_message
 	client.on_connect = on_connect
 	client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
 	client.loop_start()
 
-	start()
 	while True:
-		sensors = readSensors()
-		alg()
-
+		pass
