@@ -12,6 +12,7 @@ last_received = ''
 sensors = []
 radius = 20
 patroling = False
+kludge = [True, True, True]
 
 def receiving():
 	global ser
@@ -22,17 +23,32 @@ def receiving():
 
 def toggleBack(client, userdata, message):
 	global patroling
+	global kludge
+	if kludge[0]:
+		kludge[0] = False
+		return
+
 	patroling = ~patroling
 	if patroling:
 		client.publish("ee250zc/rpi_radius", str(radius))
 		patrol()
 
 def radiusIncBack(client, userdata, message):
+	global kludge
+	if kludge[1]:
+		kludge[1] = False
+		return
+
 	radius = min(radius + 5, 20)
 	client.publish("ee250zc/rpi_radius", str(radius))
 	client.publish("ee250zc", "\x01\x01")
 
 def radiusDecBack(client, userdata, message):
+	global kludge
+	if kludge[2]:
+		kludge[2] = False
+		return
+	
 	radius = max(radius - 5, 20)
 	client.publish("ee250zc/rpi_radius", str(radius))
 	client.publish("ee250zc", "\x01\x02")
