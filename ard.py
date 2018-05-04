@@ -24,33 +24,41 @@ def receiving():
 def toggleBack(client, userdata, message):
 	global patroling
 	global kludge
-	if kludge[0]:
+	global radius
+
+	if kludge[0] == True:
 		kludge[0] = False
 		return
-
-	if patroling:
-		patroling = false
 	else:
-		patroling = True
-		client.publish("ee250zc/rpi_radius", str(radius))
-		patrol()
+		print("toggle")
+		if patroling == True:
+			patroling = False
+		else:
+			patroling = True
+			client.publish("ee250zc/rpi_radius", str(radius))
+			Thread(target=patrol).start()
 
 def radiusIncBack(client, userdata, message):
 	global kludge
-	if kludge[1]:
+	global radius
+	
+	if kludge[1] == True:
 		kludge[1] = False
 		return
 
-	radius = min(radius + 5, 20)
+	radius = min(radius + 5, 50)
+	print("inc r =", str(radius))
 	client.publish("ee250zc/rpi_radius", str(radius))
 	client.publish("ee250zc", "\x01\x01")
 
 def radiusDecBack(client, userdata, message):
 	global kludge
-	if kludge[2]:
+	global radius
+
+	if kludge[2] == True:
 		kludge[2] = False
-		return
-	
+
+	print("dec radius")
 	radius = max(radius - 5, 20)
 	client.publish("ee250zc/rpi_radius", str(radius))
 	client.publish("ee250zc", "\x01\x02")
@@ -58,11 +66,11 @@ def radiusDecBack(client, userdata, message):
 def on_connect(client, userdata, flags, rc):
 	print("Connected to server (i.e., broker) with result code "+str(rc))
 	client.subscribe("ee250zc/rpi_toggle")
-	client.subscribe("ee250zc/rpi_radius_inc")
-	client.subscribe("ee250zc/rpi_radius_dec")
+	client.subscribe("ee250zc/rpi_inc_radius")
+	client.subscribe("ee250zc/rpi_dec_radius")
 	client.message_callback_add("ee250zc/rpi_toggle", toggleBack)
-	client.message_callback_add("ee250zc/rpi_radius_inc", radiusIncBack)
-	client.message_callback_add("ee250zc/rpi_radius_dec", radiusDecBack)
+	client.message_callback_add("ee250zc/rpi_inc_radius", radiusIncBack)
+	client.message_callback_add("ee250zc/rpi_dec_radius", radiusDecBack)
 
 def on_message(client, userdata, msg):
 	print("on_message: " + msg.topic + " " + str(msg.payload))
@@ -146,6 +154,7 @@ def patrol():
 
 if __name__ == '__main__':
 	Thread(target=receiving).start()
+	
 	client.on_message = on_message
 	client.on_connect = on_connect
 	client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
